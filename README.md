@@ -1,10 +1,10 @@
-# SHATTERED
+# WIP Context Menu
 Typescript boilerplate.
 
 ## Installation
 `npm i`
 
-## Användning
+## Usecase
 ### Dev
 `npm run watch`
 ### Build
