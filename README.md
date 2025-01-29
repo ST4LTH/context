@@ -1,5 +1,6 @@
 # WIP Context Menu
-Typescript boilerplate.
+WIP Context menu, will be built in typescript.
+UI In SolidJS.
 
 ## Installation
 `npm i`
