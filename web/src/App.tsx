@@ -2,6 +2,7 @@ import { createSignal, type Component } from "solid-js";
 import { createStore } from "solid-js/store";
 import { itemType } from "./types";
 import ContextList from "@/components/contextList";
+import { post } from "./misc";
 
 export type storeType = {
   list: itemType[];
@@ -23,12 +24,13 @@ const App: Component = () => {
       },
     ],
   });
-  const [coords, setCoords] = createSignal<number[]>([0, 700]);
-  const [drawer, setDrawer] = createSignal<number>(-1);
+  const [coords, setCoords] = createSignal<number[]>([0, 700])
+  const [drawer, setDrawer] = createSignal<number>(-1)
 
   const handleContext = (event: MouseEvent): void => {
-    event.preventDefault();
-    setDrawer(-1);
+    event.preventDefault()
+    post('click')
+    setDrawer(-1)
     setCoords([
       event.clientX - contextRef.offsetWidth / 2,
       event.clientY - contextRef.offsetHeight / 2,
@@ -36,13 +38,13 @@ const App: Component = () => {
   };
 
   const handleClick = (e: MouseEvent, index: number): void => {
-    e.stopPropagation();
+    e.stopPropagation()
     if (drawer() == index) {
-      setDrawer(-1);
-      return;
+      setDrawer(-1)
+      return
     }
-    setDrawer(index);
-  };
+    setDrawer(index)
+  }
 
   return (
     <div

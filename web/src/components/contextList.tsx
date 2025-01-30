@@ -23,11 +23,11 @@ const ContextList = ({
     };
 
     return (
-        <div class="flex flex-col min-w-[20vh] w-fit h-fit p-[0.3vh] rounded-[0.7vh] bg-black/50 text-white">
+        <div class="context flex flex-col min-w-[20vh] w-fit h-fit p-[0.3vh] rounded-[0.7vh] text-white">
             {list.map((item, index) => (
                 <div
                     onClick={(e) => handleClick(e, index)}
-                    class="relative rounded-[0.5vh] w-full flex items-center gap-[0.8vh] hover:bg-black/30 px-[0.8vh] py-[0.5vh]"
+                    class="contextItem relative rounded-[0.5vh] w-full flex items-center gap-[0.8vh] hover:bg-black/30 px-[0.8vh] py-[0.5vh]"
                 >
                     {item.icon && <Icon class="text-[1.4vh]" icon={item.icon} />}
                     <p class="text-[1.3vh]">{item.label}</p>

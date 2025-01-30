@@ -5,6 +5,6 @@ body, #app {
   position: static !important;
   overflow: hidden !important;
   background: none!important;
-  background-image: url(https://blog.fivemods.io/storage/2024/01/cover-1-1300x650.webp)!important;
-  background-size: cover;
+/*   background-image: url(https://blog.fivemods.io/storage/2024/01/cover-1-1300x650.webp)!important;
+  background-size: cover; */
 }
