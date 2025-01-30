@@ -5,3 +5,15 @@
         background: rgba(0, 0, 0, 0.60);
     }
 }
+
+.scale-fade-enter-active {
+  transition: all 0.3s ease;
+}
+.scale-fade-exit-active {
+  transition: all 0.3s cubic-bezier(1, 0.5, 0.8, 1);
+}
+.scale-fade-enter,
+.scale-fade-exit-to {
+  transform: scale(0.8);
+  opacity: 0;
+}

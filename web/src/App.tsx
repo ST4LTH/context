@@ -1,16 +1,20 @@
 import { createSignal, type Component } from "solid-js";
+import { Transition } from "solid-transition-group";
 import { createStore } from "solid-js/store";
 import { itemType } from "./types";
 import ContextList from "@/components/contextList";
 import { post } from "./misc";
+import { useNuiEvent } from "./hooks/useNuiEvent";
 
 export type storeType = {
+  open: boolean;
   list: itemType[];
 };
 
 const App: Component = () => {
   let contextRef!: HTMLDivElement;
   const [store, setStore] = createStore<storeType>({
+    open: true,
     list: [
       {
         icon: "mdi:police-badge",
@@ -26,6 +30,11 @@ const App: Component = () => {
   });
   const [coords, setCoords] = createSignal<number[]>([0, 700])
   const [drawer, setDrawer] = createSignal<number>(-1)
+
+  useNuiEvent('toggleContext', (data:boolean) => {
+    console.log(data)
+    setStore('open', data)
+  })
 
   const handleContext = (event: MouseEvent): void => {
     event.preventDefault()
@@ -54,13 +63,17 @@ const App: Component = () => {
       <div
         ref={contextRef}
         style={{ left: `${coords()[0]}px`, top: `${coords()[1]}px` }}
-        class="absolute shadow-lg"
+        class='absolute min-w-[20vh] min-h-[3vh]'
       >
-        <ContextList
-          list={store.list}
-          handleClick={handleClick}
-          drawer={drawer}
-        />
+        <Transition name="scale-fade">
+          { store.open && 
+            <ContextList
+              list={store.list}
+              handleClick={handleClick}
+              drawer={drawer}
+            />
+          }
+        </Transition>
       </div>
     </div>
   );

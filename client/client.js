@@ -10,7 +10,7 @@
 
 
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.DisableControls = exports.World3DToScreen2D = exports.RotationToDirection = exports.ScreenRelToWorld = exports.ScreenToWorld = void 0;
+exports.DisableControls = exports.CalculateDistance = exports.World3DToScreen2D = exports.RotationToDirection = exports.ScreenRelToWorld = exports.ScreenToWorld = void 0;
 const ScreenToWorld = (flags, toIgnore) => {
     const camRot = GetGameplayCamRot(0);
     const camPos = GetGameplayCamCoord();
@@ -74,6 +74,13 @@ const World3DToScreen2D = (pos) => {
     return success ? [sX, sY] : null;
 };
 exports.World3DToScreen2D = World3DToScreen2D;
+const CalculateDistance = (x1, y1, z1, x2, y2, z2) => {
+    const dx = x2 - x1;
+    const dy = y2 - y1;
+    const dz = z2 - z1;
+    return Math.sqrt(dx * dx + dy * dy + dz * dz);
+};
+exports.CalculateDistance = CalculateDistance;
 const DisableControls = () => {
     DisableControlAction(0, 0, true);
     DisableControlAction(0, 1, true);
@@ -172,6 +179,10 @@ const target = (toggle) => {
         return;
     }
     if (tickHandle) {
+        SendNuiMessage(JSON.stringify({
+            type: 'toggleContext',
+            data: false
+        }));
         clearTick(tickHandle);
         tickHandle = null;
     }
@@ -180,11 +191,19 @@ let selected = 0;
 RegisterRawNuiCallback('click', () => {
     const [hit, endCoords, surfaceNormal, entityHit, entityType, direction] = (0, utils_1.ScreenToWorld)(30, 0);
     const [x, y, z] = GetEntityCoords(PlayerPedId(), false);
+    if (!entityHit)
+        return;
+    if ((0, utils_1.CalculateDistance)(x, y, z, endCoords[0], endCoords[1], endCoords[2]) > 5)
+        return;
     selected = entityHit;
     DrawLine(x, y, z, endCoords[0], endCoords[1], endCoords[2], 255, 255, 255, 255);
     SetEntityDrawOutline(entityHit, true);
     SetEntityDrawOutlineColor(255, 255, 255, 255);
     SetEntityDrawOutlineShader(1);
+    SendNuiMessage(JSON.stringify({
+        type: 'toggleContext',
+        data: true
+    }));
     let count = 255;
     let outline = 0;
     outline = setTick(() => {

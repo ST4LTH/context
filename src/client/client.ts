@@ -1,5 +1,5 @@
 /* import * as Index from './modules/index'; */
-import { DisableControls, ScreenToWorld } from './modules/utils';
+import { CalculateDistance, DisableControls, ScreenToWorld } from './modules/utils';
 
 /* (async () => {
     await Index.Init();
@@ -29,6 +29,10 @@ const target = (toggle:boolean) : void => {
     } 
 
     if (tickHandle) {
+        SendNuiMessage(JSON.stringify({
+            type: 'toggleContext',
+            data: false
+        }));
         clearTick(tickHandle)
         tickHandle = null
     }
@@ -40,12 +44,21 @@ RegisterRawNuiCallback('click', () => {
     const [hit, endCoords, surfaceNormal, entityHit, entityType, direction] = ScreenToWorld(30, 0)
     const [x,y,z] = GetEntityCoords(PlayerPedId(), false)
 
+    if (!entityHit) return
+
+    if (CalculateDistance(x, y, z, endCoords[0], endCoords[1], endCoords[2]) > 5) return 
+
     selected = entityHit
 
     DrawLine(x, y, z, endCoords[0], endCoords[1], endCoords[2], 255, 255, 255, 255)
     SetEntityDrawOutline(entityHit, true)
     SetEntityDrawOutlineColor(255, 255, 255, 255)
     SetEntityDrawOutlineShader(1)
+
+    SendNuiMessage(JSON.stringify({
+        type: 'toggleContext',
+        data: true
+    }));
 
     let count = 255
     let outline = 0
