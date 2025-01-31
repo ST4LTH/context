@@ -1,51 +1,12 @@
-import { itemType, Vector3, zonesListType } from "client/types";
-
-export const Init = async (): Promise<void> => {}
+import { itemType, objectType, Vector3, zonesListType } from "client/types";
+import { LoadJsonFile } from "./utils";
 
 let zones:zonesListType = {
-    models: {
-        [-870868698]: {
-            banking: {
-                dist: 1,
-                options: [
-                    {
-                        label: 'Open atm',
-                    },
-                    {
-                        label: 'atm test',
-                        subItems: [
-                            {
-                                label: '123',
-                                subItems: [
-                                    {
-                                        label: 'Subitem in a subitem 🤓',
-                                    }
-                                ]
-                            }
-                        ]
-                    }
-                ]
-            },
-            test: {
-                dist: 5,
-                options: [
-                    {
-                        label: 'Test',
-                        subItems: [
-                            {
-                                label: 'Subitem',
-                                subItems: [
-                                    {
-                                        label: 'Subitem in a subitem 🤓',
-                                    }
-                                ]
-                            }
-                        ]
-                    }
-                ]
-            },
-        }
-    }
+    models: {}
+}
+
+export const Init = async (): Promise<void> => {
+    zones.models = LoadJsonFile('data/models.json')
 }
 
 export const getOptions = async (dist: number, coords: Vector3, entity: number, entityModel: number, entityType: number) : Promise<void> => {
@@ -69,4 +30,12 @@ export const getOptions = async (dist: number, coords: Vector3, entity: number, 
     }));
 
     return 
+}
+
+
+export const addModel = (model: number, id: string, data: objectType) => {
+    if (!zones.models[model]) {
+        zones.models[model] = {}
+    }
+    zones.models[model][id] = data
 }

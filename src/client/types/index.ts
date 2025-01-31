@@ -7,11 +7,13 @@ export type itemType = {
     subItems?: itemType[]
 }
 
+export type objectType = {
+    dist?: number,
+    options: itemType[]
+} 
+
 export type zoneType = {
-    [key: string]: {
-        dist?: number,
-        options: itemType[]
-    } 
+    [key: string]: objectType
 } 
 
 export type zonesListType = {

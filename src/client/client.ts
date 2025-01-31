@@ -1,15 +1,37 @@
 import * as Zones from './modules/zones';
-import { CalculateDistance, DisableControls, ScreenToWorld } from './modules/utils';
+import { CalculateDistance, DisableControls, LoadJsonFile, ScreenToWorld } from './modules/utils';
 
 (async () => {
     await Zones.Init();
 })();
 
+const config = LoadJsonFile<typeof import('../../data/config.json')>('data/config.json')
+
+console.log(JSON.stringify(config))
+
+/* Zones.addModel(-870868698, 'banking', {
+    dist: 5,
+    options: [
+        {
+            label: 'Test',
+            subItems: [
+                {
+                    label: 'Subitem',
+                    subItems: [
+                        {
+                            label: 'Subitem in a subitem 🤓',
+                        }
+                    ]
+                }
+            ]
+        }
+    ]
+}) */
+
 let selected: number = 0
 let selecting: boolean = false
 let tickHandle: number | null = null
 let direction: 'left' | 'right' | null = null
-const maxDistance: number = 10
 
 const target = (toggle:boolean) : void => {
     selecting = toggle
@@ -67,7 +89,7 @@ RegisterRawNuiCallback('click', async () => {
     const [x, y, z] = GetEntityCoords(PlayerPedId(), false)
     const dist = CalculateDistance(x, y, z, endCoords[0], endCoords[1], endCoords[2])
 
-    if (!hit || !entityHit || dist > maxDistance) {
+    if (!hit || !entityHit || dist > config.maxDistance) {
         SendNuiMessage(JSON.stringify({
             type: 'toggleContext',
             data: false

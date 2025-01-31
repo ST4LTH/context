@@ -88,6 +88,14 @@ export const CalculateDistance = (x1: number, y1: number, z1: number, x2: number
     return Math.sqrt(dx * dx + dy * dy + dz * dz)
 }
 
+export function LoadFile(path: string) {
+    return LoadResourceFile(GetCurrentResourceName(), path);
+}
+
+export const LoadJsonFile = <T = unknown>(path: string): T => {
+    return JSON.parse(LoadFile(path)) as T;
+}
+
 export const DisableControls = (): void => {
     DisableControlAction(0, 0, true) 
     DisableControlAction(0, 1, true)  

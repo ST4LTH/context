@@ -23,7 +23,7 @@ const ContextList = ({
     };
 
     return (
-        <div class="context shadow-lg flex flex-col min-w-[20vh] w-fit h-fit p-[0.3vh] rounded-[0.7vh] text-white">
+        <div class="context shadow-lg flex flex-col min-w-[20vh] w-fit h-fit p-[0.35vh] rounded-[0.7vh] text-white">
             {list.map((item, index) => (
                 <div
                     onClick={(e) => handleClick(e, index)}
