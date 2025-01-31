@@ -9,7 +9,20 @@ let zones:zonesListType = {
                 dist: 1,
                 options: [
                     {
-                        label: 'Open atm'
+                        label: 'Open atm',
+                    },
+                    {
+                        label: 'atm test',
+                        subItems: [
+                            {
+                                label: '123',
+                                subItems: [
+                                    {
+                                        label: 'Subitem in a subitem 🤓',
+                                    }
+                                ]
+                            }
+                        ]
                     }
                 ]
             },
@@ -17,7 +30,17 @@ let zones:zonesListType = {
                 dist: 5,
                 options: [
                     {
-                        label: 'Test'
+                        label: 'Test',
+                        subItems: [
+                            {
+                                label: 'Subitem',
+                                subItems: [
+                                    {
+                                        label: 'Subitem in a subitem 🤓',
+                                    }
+                                ]
+                            }
+                        ]
                     }
                 ]
             },
