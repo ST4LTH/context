@@ -1,12 +1,14 @@
-/* import * as Index from './modules/index'; */
+import * as Zones from './modules/zones';
 import { CalculateDistance, DisableControls, ScreenToWorld } from './modules/utils';
 
-/* (async () => {
-    await Index.Init();
-})(); */
+(async () => {
+    await Zones.Init();
+})();
 
-let selecting:boolean = false
+let selected: number = 0
+let selecting: boolean = false
 let tickHandle: number | null = null
+const maxDistance: number = 10
 
 const target = (toggle:boolean) : void => {
     selecting = toggle
@@ -15,20 +17,33 @@ const target = (toggle:boolean) : void => {
     SetCursorLocation(0.5, 0.5)
     
     if (selecting) {
-        tickHandle = setTick(() => {
-            DisableControls()
+        let count = 255
 
-            if (!selecting) {
-                if (tickHandle) {
-                    clearTick(tickHandle)
-                    tickHandle = null
-                }
+        tickHandle = setTick(() => {
+            DisableControls();
+    
+            if (!selecting && tickHandle) {
+                clearTick(tickHandle);
+                tickHandle = null;
+                return;
             }
-        })
+    
+            if (!selected) return
+            if (count <= 0) {
+                SetEntityDrawOutline(selected, false);
+                selected = 0;
+                count = 255
+                return
+            } 
+
+            count = count - 10
+            SetEntityDrawOutlineColor(255, 255, 255, count - 10);
+        });
         return
     } 
 
     if (tickHandle) {
+        if (selected) SetEntityDrawOutline(selected, false)
         SendNuiMessage(JSON.stringify({
             type: 'toggleContext',
             data: false
@@ -38,48 +53,44 @@ const target = (toggle:boolean) : void => {
     }
 }
 
-let selected = 0
+RegisterRawNuiCallback('click', async () => {
+    const [hit, endCoords, surfaceNormal, entityHit, entityType, direction] = ScreenToWorld(-1, 0);
+    const [x, y, z] = GetEntityCoords(PlayerPedId(), false);
+    const dist = CalculateDistance(x, y, z, endCoords[0], endCoords[1], endCoords[2]);
 
-RegisterRawNuiCallback('click', () => {
-    const [hit, endCoords, surfaceNormal, entityHit, entityType, direction] = ScreenToWorld(30, 0)
-    const [x,y,z] = GetEntityCoords(PlayerPedId(), false)
+    if (!hit || !entityHit || dist > maxDistance) {
+        SendNuiMessage(JSON.stringify({
+            type: 'toggleContext',
+            data: false
+        }));
+        return;
+    }
 
-    if (!entityHit) return
-
-    if (CalculateDistance(x, y, z, endCoords[0], endCoords[1], endCoords[2]) > 5) return 
-
-    selected = entityHit
-
-    DrawLine(x, y, z, endCoords[0], endCoords[1], endCoords[2], 255, 255, 255, 255)
-    SetEntityDrawOutline(entityHit, true)
-    SetEntityDrawOutlineColor(255, 255, 255, 255)
-    SetEntityDrawOutlineShader(1)
+    try {
+        await Zones.getOptions(dist, endCoords, entityHit, GetEntityModel(entityHit), entityType);
+    } catch (error) {
+        SendNuiMessage(JSON.stringify({
+            type: 'toggleContext',
+            data: false
+        }))
+        return
+    }
 
     SendNuiMessage(JSON.stringify({
         type: 'toggleContext',
         data: true
     }));
 
-    let count = 255
-    let outline = 0
+    if (selected) {
+        SetEntityDrawOutline(selected, false)
+    }
 
-    outline = setTick(() => {
-        count = count - 10
+    DrawLine(x, y, z, endCoords[0], endCoords[1], endCoords[2], 255, 255, 255, 255);
+    SetEntityDrawOutline(entityHit, true);
+    SetEntityDrawOutlineShader(1);
+    selected = entityHit;
+});
 
-        SetEntityDrawOutlineColor(255, 255, 255, count)
-        if (count < 0 || selected !== entityHit) {
-            SetEntityDrawOutline(entityHit, false)
-            clearTick(outline)
-        }
-    })
-})
-
-RegisterCommand('+target', () : void => {
-    target(true)
-}, false)
-
-RegisterCommand('-target', () : void => {
-    target(false)
-}, false)
-
+RegisterCommand('+target', () : void => { target(true) }, false)
+RegisterCommand('-target', () : void => { target(false) }, false)
 RegisterKeyMapping('+target', 'target', 'keyboard', 'L_ALT')

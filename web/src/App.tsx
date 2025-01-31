@@ -15,24 +15,17 @@ const App: Component = () => {
   let contextRef!: HTMLDivElement;
   const [store, setStore] = createStore<storeType>({
     open: true,
-    list: [
-      {
-        icon: "mdi:police-badge",
-        label: "Police actions",
-        subItems: [{ label: "Search", subItems: [{ label: "Search" }] }],
-      },
-      {
-        icon: "mdi:police-badge",
-        label: "Police actions",
-        subItems: [{ label: "Asd" }],
-      },
-    ],
+    list: [],
   });
   const [coords, setCoords] = createSignal<number[]>([0, 700])
   const [drawer, setDrawer] = createSignal<number>(-1)
 
+  useNuiEvent('setMenu', (data:itemType[]) => {
+    console.log(JSON.stringify(data))
+    setStore('list', data)
+  })
+
   useNuiEvent('toggleContext', (data:boolean) => {
-    console.log(data)
     setStore('open', data)
   })
 
@@ -66,7 +59,7 @@ const App: Component = () => {
         class='absolute min-w-[20vh] min-h-[3vh]'
       >
         <Transition name="scale-fade">
-          { store.open && 
+          { store.open && store.list.length > 0 &&
             <ContextList
               list={store.list}
               handleClick={handleClick}

@@ -2,6 +2,124 @@
 /******/ 	"use strict";
 /******/ 	var __webpack_modules__ = ({
 
+/***/ "./src/client/client.ts":
+/*!******************************!*\
+  !*** ./src/client/client.ts ***!
+  \******************************/
+/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
+
+
+var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    var desc = Object.getOwnPropertyDescriptor(m, k);
+    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
+      desc = { enumerable: true, get: function() { return m[k]; } };
+    }
+    Object.defineProperty(o, k2, desc);
+}) : (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    o[k2] = m[k];
+}));
+var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
+    Object.defineProperty(o, "default", { enumerable: true, value: v });
+}) : function(o, v) {
+    o["default"] = v;
+});
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    __setModuleDefault(result, mod);
+    return result;
+};
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+const Zones = __importStar(__webpack_require__(/*! ./modules/zones */ "./src/client/modules/zones.ts"));
+const utils_1 = __webpack_require__(/*! ./modules/utils */ "./src/client/modules/utils.ts");
+(async () => {
+    await Zones.Init();
+})();
+let selected = 0;
+let selecting = false;
+let tickHandle = null;
+const maxDistance = 10;
+const target = (toggle) => {
+    selecting = toggle;
+    SetNuiFocus(toggle, toggle);
+    SetNuiFocusKeepInput(toggle);
+    SetCursorLocation(0.5, 0.5);
+    if (selecting) {
+        let count = 255;
+        tickHandle = setTick(() => {
+            (0, utils_1.DisableControls)();
+            if (!selecting && tickHandle) {
+                clearTick(tickHandle);
+                tickHandle = null;
+                return;
+            }
+            if (!selected)
+                return;
+            if (count <= 0) {
+                SetEntityDrawOutline(selected, false);
+                selected = 0;
+                count = 255;
+                return;
+            }
+            count = count - 10;
+            SetEntityDrawOutlineColor(255, 255, 255, count - 10);
+        });
+        return;
+    }
+    if (tickHandle) {
+        if (selected)
+            SetEntityDrawOutline(selected, false);
+        SendNuiMessage(JSON.stringify({
+            type: 'toggleContext',
+            data: false
+        }));
+        clearTick(tickHandle);
+        tickHandle = null;
+    }
+};
+RegisterRawNuiCallback('click', async () => {
+    const [hit, endCoords, surfaceNormal, entityHit, entityType, direction] = (0, utils_1.ScreenToWorld)(-1, 0);
+    const [x, y, z] = GetEntityCoords(PlayerPedId(), false);
+    const dist = (0, utils_1.CalculateDistance)(x, y, z, endCoords[0], endCoords[1], endCoords[2]);
+    if (!hit || !entityHit || dist > maxDistance) {
+        SendNuiMessage(JSON.stringify({
+            type: 'toggleContext',
+            data: false
+        }));
+        return;
+    }
+    try {
+        await Zones.getOptions(dist, endCoords, entityHit, GetEntityModel(entityHit), entityType);
+    }
+    catch (error) {
+        SendNuiMessage(JSON.stringify({
+            type: 'toggleContext',
+            data: false
+        }));
+        return;
+    }
+    SendNuiMessage(JSON.stringify({
+        type: 'toggleContext',
+        data: true
+    }));
+    if (selected) {
+        SetEntityDrawOutline(selected, false);
+    }
+    DrawLine(x, y, z, endCoords[0], endCoords[1], endCoords[2], 255, 255, 255, 255);
+    SetEntityDrawOutline(entityHit, true);
+    SetEntityDrawOutlineShader(1);
+    selected = entityHit;
+});
+RegisterCommand('+target', () => { target(true); }, false);
+RegisterCommand('-target', () => { target(false); }, false);
+RegisterKeyMapping('+target', 'target', 'keyboard', 'L_ALT');
+
+
+/***/ }),
+
 /***/ "./src/client/modules/utils.ts":
 /*!*************************************!*\
   !*** ./src/client/modules/utils.ts ***!
@@ -26,11 +144,12 @@ const ScreenToWorld = (flags, toIgnore) => {
     ];
     const rayHandle = StartShapeTestRay(cam3DPos[0], cam3DPos[1], cam3DPos[2], direction[0], direction[1], direction[2], flags, toIgnore, 0);
     const [_, hit, endCoords, surfaceNormal, entityHit] = GetShapeTestResult(rayHandle);
+    const endCoordsVector = [endCoords[0], endCoords[1], endCoords[2]];
     let entityType = 0;
     if (entityHit >= 1) {
         entityType = GetEntityType(entityHit);
     }
-    return [hit, endCoords, surfaceNormal, entityHit, entityType, direction];
+    return [hit, endCoordsVector, surfaceNormal, entityHit, entityType, direction];
 };
 exports.ScreenToWorld = ScreenToWorld;
 const ScreenRelToWorld = (camPos, camRot, cursor) => {
@@ -116,6 +235,64 @@ const DisableControls = () => {
 exports.DisableControls = DisableControls;
 
 
+/***/ }),
+
+/***/ "./src/client/modules/zones.ts":
+/*!*************************************!*\
+  !*** ./src/client/modules/zones.ts ***!
+  \*************************************/
+/***/ ((__unused_webpack_module, exports) => {
+
+
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.getOptions = exports.Init = void 0;
+const Init = async () => { };
+exports.Init = Init;
+let zones = {
+    models: {
+        [-870868698]: {
+            banking: {
+                dist: 1,
+                options: [
+                    {
+                        label: 'Open atm'
+                    }
+                ]
+            },
+            test: {
+                dist: 5,
+                options: [
+                    {
+                        label: 'Test'
+                    }
+                ]
+            },
+        }
+    }
+};
+const getOptions = async (dist, coords, entity, entityModel, entityType) => {
+    let list = [];
+    if (zones.models[entityModel]) {
+        const zone = zones.models[entityModel];
+        Object.keys(zone).forEach((key) => {
+            const zoneItem = zone[key];
+            if (!zoneItem)
+                return;
+            if (zoneItem.dist !== undefined && zoneItem.dist < dist) {
+                return;
+            }
+            list.push(...zoneItem.options);
+        });
+    }
+    SendNuiMessage(JSON.stringify({
+        type: 'setMenu',
+        data: list
+    }));
+    return;
+};
+exports.getOptions = getOptions;
+
+
 /***/ })
 
 /******/ 	});
@@ -138,93 +315,19 @@ exports.DisableControls = DisableControls;
 /******/ 		};
 /******/ 	
 /******/ 		// Execute the module function
-/******/ 		__webpack_modules__[moduleId](module, module.exports, __webpack_require__);
+/******/ 		__webpack_modules__[moduleId].call(module.exports, module, module.exports, __webpack_require__);
 /******/ 	
 /******/ 		// Return the exports of the module
 /******/ 		return module.exports;
 /******/ 	}
 /******/ 	
 /************************************************************************/
-var __webpack_exports__ = {};
-// This entry needs to be wrapped in an IIFE because it needs to be isolated against other modules in the chunk.
-(() => {
-var exports = __webpack_exports__;
-/*!******************************!*\
-  !*** ./src/client/client.ts ***!
-  \******************************/
-
-Object.defineProperty(exports, "__esModule", ({ value: true }));
-/* import * as Index from './modules/index'; */
-const utils_1 = __webpack_require__(/*! ./modules/utils */ "./src/client/modules/utils.ts");
-/* (async () => {
-    await Index.Init();
-})(); */
-let selecting = false;
-let tickHandle = null;
-const target = (toggle) => {
-    selecting = toggle;
-    SetNuiFocus(toggle, toggle);
-    SetNuiFocusKeepInput(toggle);
-    SetCursorLocation(0.5, 0.5);
-    if (selecting) {
-        tickHandle = setTick(() => {
-            (0, utils_1.DisableControls)();
-            if (!selecting) {
-                if (tickHandle) {
-                    clearTick(tickHandle);
-                    tickHandle = null;
-                }
-            }
-        });
-        return;
-    }
-    if (tickHandle) {
-        SendNuiMessage(JSON.stringify({
-            type: 'toggleContext',
-            data: false
-        }));
-        clearTick(tickHandle);
-        tickHandle = null;
-    }
-};
-let selected = 0;
-RegisterRawNuiCallback('click', () => {
-    const [hit, endCoords, surfaceNormal, entityHit, entityType, direction] = (0, utils_1.ScreenToWorld)(30, 0);
-    const [x, y, z] = GetEntityCoords(PlayerPedId(), false);
-    if (!entityHit)
-        return;
-    if ((0, utils_1.CalculateDistance)(x, y, z, endCoords[0], endCoords[1], endCoords[2]) > 5)
-        return;
-    selected = entityHit;
-    DrawLine(x, y, z, endCoords[0], endCoords[1], endCoords[2], 255, 255, 255, 255);
-    SetEntityDrawOutline(entityHit, true);
-    SetEntityDrawOutlineColor(255, 255, 255, 255);
-    SetEntityDrawOutlineShader(1);
-    SendNuiMessage(JSON.stringify({
-        type: 'toggleContext',
-        data: true
-    }));
-    let count = 255;
-    let outline = 0;
-    outline = setTick(() => {
-        count = count - 10;
-        SetEntityDrawOutlineColor(255, 255, 255, count);
-        if (count < 0 || selected !== entityHit) {
-            SetEntityDrawOutline(entityHit, false);
-            clearTick(outline);
-        }
-    });
-});
-RegisterCommand('+target', () => {
-    target(true);
-}, false);
-RegisterCommand('-target', () => {
-    target(false);
-}, false);
-RegisterKeyMapping('+target', 'target', 'keyboard', 'L_ALT');
-
-})();
-
+/******/ 	
+/******/ 	// startup
+/******/ 	// Load entry module and return exports
+/******/ 	// This entry module is referenced by other modules so it can't be inlined
+/******/ 	var __webpack_exports__ = __webpack_require__("./src/client/client.ts");
+/******/ 	
 /******/ })()
 ;
 //# sourceMappingURL=client.js.map

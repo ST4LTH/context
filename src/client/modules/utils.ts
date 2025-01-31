@@ -1,7 +1,6 @@
-type Vector3 = [number, number, number];
-type Vector2 = [number, number];
+import { Vector2, Vector3 } from "client/types";
 
-export const ScreenToWorld = (flags: number, toIgnore: number): [boolean, number[], number[], number, number, Vector3] => {
+export const ScreenToWorld = (flags: number, toIgnore: number): [boolean, Vector3, number[], number, number, Vector3] => {
     const camRot = GetGameplayCamRot(0) as Vector3;
     const camPos = GetGameplayCamCoord() as Vector3;
     const posX = GetControlNormal(0, 239);
@@ -23,13 +22,14 @@ export const ScreenToWorld = (flags: number, toIgnore: number): [boolean, number
     );
 
     const [_, hit, endCoords, surfaceNormal, entityHit] = GetShapeTestResult(rayHandle);
+    const endCoordsVector: Vector3 = [endCoords[0], endCoords[1], endCoords[2]];
     let entityType = 0;
 
     if (entityHit >= 1) {
         entityType = GetEntityType(entityHit);
     }
-    
-    return [hit, endCoords, surfaceNormal, entityHit, entityType, direction];
+
+    return [hit, endCoordsVector, surfaceNormal, entityHit, entityType, direction];
 };
 
 export const ScreenRelToWorld = (camPos: Vector3, camRot: Vector3, cursor: Vector2): [Vector3, Vector3] => {
