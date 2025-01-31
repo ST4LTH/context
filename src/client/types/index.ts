@@ -1,5 +1,5 @@
-export type Vector3 = [number, number, number];
-export type Vector2 = [number, number];
+export type Vector3 = [number, number, number]
+export type Vector2 = [number, number]
 
 export type itemType = {
     label: string,
@@ -16,6 +16,6 @@ export type zoneType = {
 
 export type zonesListType = {
     models: {
-        [key: number]: zoneType; 
+        [key: number]: zoneType
     };
 };

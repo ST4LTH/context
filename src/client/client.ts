@@ -22,7 +22,7 @@ const target = (toggle:boolean) : void => {
         let scale = 1
 
         tickHandle = setTick(() => {
-            DisableControls();
+            DisableControls()
 
             if (direction) {
                 if (scale < 4.0) {
@@ -32,22 +32,22 @@ const target = (toggle:boolean) : void => {
             }
     
             if (!selecting && tickHandle) {
-                clearTick(tickHandle);
-                tickHandle = null;
-                return;
+                clearTick(tickHandle)
+                tickHandle = null
+                return
             }
     
             if (!selected) return
             if (count <= 0) {
-                SetEntityDrawOutline(selected, false);
-                selected = 0;
+                SetEntityDrawOutline(selected, false)
+                selected = 0
                 count = 255
                 return
             } 
 
             count = count - 10
-            SetEntityDrawOutlineColor(255, 255, 255, count - 10);
-        });
+            SetEntityDrawOutlineColor(255, 255, 255, count - 10)
+        })
         return
     } 
 
@@ -56,16 +56,16 @@ const target = (toggle:boolean) : void => {
         SendNuiMessage(JSON.stringify({
             type: 'toggleContext',
             data: false
-        }));
+        }))
         clearTick(tickHandle)
         tickHandle = null
     }
 }
 
 RegisterRawNuiCallback('click', async () => {
-    const [hit, endCoords, surfaceNormal, entityHit, entityType, direction] = ScreenToWorld(-1, 0);
-    const [x, y, z] = GetEntityCoords(PlayerPedId(), false);
-    const dist = CalculateDistance(x, y, z, endCoords[0], endCoords[1], endCoords[2]);
+    const [hit, endCoords, surfaceNormal, entityHit, entityType, direction] = ScreenToWorld(-1, 0)
+    const [x, y, z] = GetEntityCoords(PlayerPedId(), false)
+    const dist = CalculateDistance(x, y, z, endCoords[0], endCoords[1], endCoords[2])
 
     if (!hit || !entityHit || dist > maxDistance) {
         SendNuiMessage(JSON.stringify({
@@ -76,7 +76,7 @@ RegisterRawNuiCallback('click', async () => {
     }
 
     try {
-        await Zones.getOptions(dist, endCoords, entityHit, GetEntityModel(entityHit), entityType);
+        await Zones.getOptions(dist, endCoords, entityHit, GetEntityModel(entityHit), entityType)
     } catch (error) {
         SendNuiMessage(JSON.stringify({
             type: 'toggleContext',
@@ -94,10 +94,10 @@ RegisterRawNuiCallback('click', async () => {
         SetEntityDrawOutline(selected, false)
     }
 
-    DrawLine(x, y, z, endCoords[0], endCoords[1], endCoords[2], 255, 255, 255, 255);
-    SetEntityDrawOutline(entityHit, true);
-    SetEntityDrawOutlineShader(1);
-    selected = entityHit;
+    DrawLine(x, y, z, endCoords[0], endCoords[1], endCoords[2], 255, 255, 255, 255)
+    SetEntityDrawOutline(entityHit, true)
+    SetEntityDrawOutlineShader(1)
+    selected = entityHit
 });
 
 RegisterRawNuiCallback('left', () => {
@@ -114,4 +114,4 @@ RegisterRawNuiCallback('center', () => {
 
 RegisterCommand('+target', () : void => { target(true) }, false)
 RegisterCommand('-target', () : void => { target(false) }, false)
-RegisterKeyMapping('+target', 'target', 'keyboard', 'L_ALT')
+RegisterKeyMapping('+target', 'target', 'keyboard', 'LEFT ALT')

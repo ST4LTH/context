@@ -1,6 +1,6 @@
 import { itemType, Vector3, zonesListType } from "client/types";
 
-export const Init = async (): Promise<void> => {};
+export const Init = async (): Promise<void> => {}
 
 let zones:zonesListType = {
     models: {
@@ -59,7 +59,7 @@ export const getOptions = async (dist: number, coords: Vector3, entity: number, 
             if (zoneItem.dist !== undefined && zoneItem.dist < dist) {
                 return
             }
-            list.push(...zoneItem.options);
+            list.push(...zoneItem.options)
         });
     }
 
