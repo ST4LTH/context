@@ -1,6 +1,6 @@
 type CallbackFunction = (response: any) => void;
 
-export const post = async (event: string, cb?: CallbackFunction, data?: any) => {
+export const post = async (event: string, data?: any, cb?: CallbackFunction) => {
   if (event) {
     try {
       const response = await fetch(`https://context/${event}`, {

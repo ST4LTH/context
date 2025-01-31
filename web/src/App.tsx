@@ -1,4 +1,4 @@
-import { createSignal, type Component } from "solid-js";
+import { createEffect, createSignal, onCleanup, type Component } from "solid-js";
 import { Transition } from "solid-transition-group";
 import { createStore } from "solid-js/store";
 import { itemType } from "./types";
@@ -19,6 +19,7 @@ const App: Component = () => {
   });
   const [coords, setCoords] = createSignal<number[]>([0, 700])
   const [drawer, setDrawer] = createSignal<number>(-1)
+  const [direction, setDirection] = createSignal<'left' | 'right' | 'center'>()
 
   useNuiEvent('setMenu', (data:itemType[]) => {
     console.log(JSON.stringify(data))
@@ -29,7 +30,7 @@ const App: Component = () => {
     setStore('open', data)
   })
 
-  const handleContext = (event: MouseEvent): void => {
+  const handleContext = (event: MouseEvent) : void => {
     event.preventDefault()
     post('click')
     setDrawer(-1)
@@ -39,7 +40,7 @@ const App: Component = () => {
     ]);
   };
 
-  const handleClick = (e: MouseEvent, index: number): void => {
+  const handleClick = (e: MouseEvent, index: number) : void => {
     e.stopPropagation()
     if (drawer() == index) {
       setDrawer(-1)
@@ -47,6 +48,28 @@ const App: Component = () => {
     }
     setDrawer(index)
   }
+
+  const handleMouseMove = (event: MouseEvent): void => {
+    let dir: 'left' | 'right' | 'center' = 'center';
+  
+    if (event.clientX < 50) {
+      dir = 'right'
+    } else if (event.clientX > window.innerWidth - 50) {
+      dir = 'left'
+    }
+  
+    if (dir !== direction()) {
+      post(dir)
+      setDirection(dir)
+    }
+  };
+  
+
+  createEffect(() => {
+    window.addEventListener("mousemove", handleMouseMove);
+    onCleanup(() => window.removeEventListener("mousemove", handleMouseMove));
+  });
+
 
   return (
     <div

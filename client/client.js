@@ -41,6 +41,7 @@ const utils_1 = __webpack_require__(/*! ./modules/utils */ "./src/client/modules
 let selected = 0;
 let selecting = false;
 let tickHandle = null;
+let direction = null;
 const maxDistance = 10;
 const target = (toggle) => {
     selecting = toggle;
@@ -49,8 +50,15 @@ const target = (toggle) => {
     SetCursorLocation(0.5, 0.5);
     if (selecting) {
         let count = 255;
+        let scale = 1;
         tickHandle = setTick(() => {
             (0, utils_1.DisableControls)();
+            if (direction) {
+                if (scale < 4.0) {
+                    scale = scale + 0.010;
+                }
+                SetGameplayCamRelativeHeading(GetGameplayCamRelativeHeading() + (direction == 'right' ? +0.10 : -0.10) * scale);
+            }
             if (!selecting && tickHandle) {
                 clearTick(tickHandle);
                 tickHandle = null;
@@ -112,6 +120,15 @@ RegisterRawNuiCallback('click', async () => {
     SetEntityDrawOutline(entityHit, true);
     SetEntityDrawOutlineShader(1);
     selected = entityHit;
+});
+RegisterRawNuiCallback('left', () => {
+    direction = 'left';
+});
+RegisterRawNuiCallback('right', () => {
+    direction = 'right';
+});
+RegisterRawNuiCallback('center', () => {
+    direction = null;
 });
 RegisterCommand('+target', () => { target(true); }, false);
 RegisterCommand('-target', () => { target(false); }, false);

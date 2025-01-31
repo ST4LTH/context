@@ -8,6 +8,7 @@ import { CalculateDistance, DisableControls, ScreenToWorld } from './modules/uti
 let selected: number = 0
 let selecting: boolean = false
 let tickHandle: number | null = null
+let direction: 'left' | 'right' | null = null
 const maxDistance: number = 10
 
 const target = (toggle:boolean) : void => {
@@ -15,12 +16,20 @@ const target = (toggle:boolean) : void => {
     SetNuiFocus(toggle, toggle)
     SetNuiFocusKeepInput(toggle)
     SetCursorLocation(0.5, 0.5)
-    
+
     if (selecting) {
         let count = 255
+        let scale = 1
 
         tickHandle = setTick(() => {
             DisableControls();
+
+            if (direction) {
+                if (scale < 4.0) {
+                    scale = scale + 0.010
+                }
+                SetGameplayCamRelativeHeading(GetGameplayCamRelativeHeading() + ( direction == 'right' ? + 0.10 : -0.10 )*scale)
+            }
     
             if (!selecting && tickHandle) {
                 clearTick(tickHandle);
@@ -89,6 +98,18 @@ RegisterRawNuiCallback('click', async () => {
     SetEntityDrawOutline(entityHit, true);
     SetEntityDrawOutlineShader(1);
     selected = entityHit;
+});
+
+RegisterRawNuiCallback('left', () => {
+    direction = 'left'
+});
+
+RegisterRawNuiCallback('right', () => {
+    direction = 'right'
+});
+
+RegisterRawNuiCallback('center', () => {
+    direction = null
 });
 
 RegisterCommand('+target', () : void => { target(true) }, false)
