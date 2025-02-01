@@ -3,6 +3,7 @@ game 'gta5'
 
 client_scripts {
     'dist/client/*.js',
+    'main.lua'
 }
 
 server_scripts {

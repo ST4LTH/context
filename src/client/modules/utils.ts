@@ -1,4 +1,6 @@
-import { Vector2, Vector3 } from "client/types";
+import { numZoneType, Vector2, Vector3, zoneType } from "client/types";
+
+export const Delay = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 
 export const ScreenToWorld = (flags: number, toIgnore: number): [boolean, Vector3, number[], number, number, Vector3] => {
     const camRot = GetGameplayCamRot(0) as Vector3
@@ -86,6 +88,19 @@ export const CalculateDistance = (x1: number, y1: number, z1: number, x2: number
     const dy = y2 - y1
     const dz = z2 - z1
     return Math.sqrt(dx * dx + dy * dy + dz * dz)
+}
+
+export const GetLongestDistance = (zones: zoneType): number => {
+    const distances: number[] = []
+
+    for (const zoneKey in zones) {
+        const object = zones[zoneKey]
+        if (object.dist) {
+            distances.push(object.dist)
+        }
+    }
+
+    return distances.length > 0 ? Math.max(...distances) : 0
 }
 
 export function LoadFile(path: string) {

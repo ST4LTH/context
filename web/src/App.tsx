@@ -120,10 +120,10 @@ const App: Component = () => {
   };
   
 
-  createEffect(() => {
+/*   createEffect(() => {
     window.addEventListener("mousemove", handleMouseMove)
     onCleanup(() => window.removeEventListener("mousemove", handleMouseMove))
-  });
+  }); */
 
   createEffect(() => {
     const handleGlobalClick = (event: MouseEvent) => {

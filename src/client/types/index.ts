@@ -16,11 +16,12 @@ export type zoneType = {
     [key: string]: objectType
 } 
 
+export type numZoneType = { [key: number]: zoneType }
+export type stringZoneType = { [key: number]: zoneType }
+export type spriteOffsetsType = { [key: string]: Vector3 }
+
 export type zonesListType = {
-    models: {
-        [key: number]: zoneType
-    };
-    polyZones: {
-        [key: string]: zoneType
-    };
+    models: numZoneType;
+    polyZones: stringZoneType;
+    spriteOffsets: spriteOffsetsType
 };

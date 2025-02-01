@@ -1,3 +1,9 @@
 {
-    "maxDistance" : 10
+    "maxDistance" : 10,
+    "outline" : {
+        "enabled" : false,
+        "r" : 255,
+        "g" : 255,
+        "b" : 255
+    }
 }

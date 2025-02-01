@@ -1,5 +1,6 @@
 import * as Zones from './modules/zones';
 import { CalculateDistance, DisableControls, LoadJsonFile, ScreenToWorld } from './modules/utils';
+import { displaySprites } from './modules/zones';
 
 (async () => {
     await Zones.Init();
@@ -29,7 +30,6 @@ const config = LoadJsonFile<typeof import('../../data/config.json')>('data/confi
 let selected: number = 0
 let selecting: boolean = false
 let tickHandle: number | null = null
-let direction: 'left' | 'right' | null = null
 
 const target = (toggle:boolean) : void => {
     selecting = toggle
@@ -39,17 +39,10 @@ const target = (toggle:boolean) : void => {
 
     if (selecting) {
         let count = 255
-        let scale = 1
 
+        displaySprites(true)
         tickHandle = setTick(() => {
             DisableControls()
-
-            if (direction) {
-                if (scale < 4.0) {
-                    scale = scale + 0.010
-                }
-                SetGameplayCamRelativeHeading(GetGameplayCamRelativeHeading() + ( direction == 'right' ? + 0.10 : -0.10 )*scale)
-            }
     
             if (!selecting && tickHandle) {
                 clearTick(tickHandle)
@@ -73,6 +66,7 @@ const target = (toggle:boolean) : void => {
 
     if (tickHandle) {
         if (selected) SetEntityDrawOutline(selected, false)
+        displaySprites(false)
         SendNuiMessage(JSON.stringify({
             type: 'toggleContext',
             data: false
@@ -114,22 +108,12 @@ RegisterRawNuiCallback('click', async () => {
         SetEntityDrawOutline(selected, false)
     }
 
-    DrawLine(x, y, z, endCoords[0], endCoords[1], endCoords[2], 255, 255, 255, 255)
-    SetEntityDrawOutline(entityHit, true)
-    SetEntityDrawOutlineShader(1)
-    selected = entityHit
-});
-
-RegisterRawNuiCallback('left', () => {
-    direction = 'left'
-});
-
-RegisterRawNuiCallback('right', () => {
-    direction = 'right'
-});
-
-RegisterRawNuiCallback('center', () => {
-    direction = null
+    if (config.outline.enabled) {
+        DrawLine(x, y, z, endCoords[0], endCoords[1], endCoords[2], config.outline.r, config.outline.g, config.outline.b, 255)
+        SetEntityDrawOutline(entityHit, true)
+        SetEntityDrawOutlineShader(1)
+        selected = entityHit
+    }
 });
 
 RegisterCommand('+target', () : void => { target(true) }, false)
