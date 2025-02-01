@@ -6,6 +6,10 @@
     }
 }
 
+::-webkit-scrollbar {
+  display: none;
+}
+
 .scale-fade-enter-active {
   transition: all 0.2s ease;
 }

@@ -7,8 +7,6 @@ import { CalculateDistance, DisableControls, LoadJsonFile, ScreenToWorld } from 
 
 const config = LoadJsonFile<typeof import('../../data/config.json')>('data/config.json')
 
-console.log(JSON.stringify(config))
-
 /* Zones.addModel(-870868698, 'banking', {
     dist: 5,
     options: [

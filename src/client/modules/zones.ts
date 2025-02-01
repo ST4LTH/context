@@ -2,7 +2,8 @@ import { itemType, objectType, Vector3, zonesListType } from "client/types";
 import { LoadJsonFile } from "./utils";
 
 let zones:zonesListType = {
-    models: {}
+    models: {},
+    polyZones: {}
 }
 
 export const Init = async (): Promise<void> => {
@@ -17,9 +18,7 @@ export const getOptions = async (dist: number, coords: Vector3, entity: number, 
             const zoneItem = zone[key]
 
             if (!zoneItem) return 
-            if (zoneItem.dist !== undefined && zoneItem.dist < dist) {
-                return
-            }
+            if (zoneItem.dist !== undefined && zoneItem.dist < dist) return
             list.push(...zoneItem.options)
         });
     }

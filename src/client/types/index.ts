@@ -20,4 +20,7 @@ export type zonesListType = {
     models: {
         [key: number]: zoneType
     };
+    polyZones: {
+        [key: string]: zoneType
+    };
 };
