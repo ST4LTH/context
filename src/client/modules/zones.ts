@@ -4,23 +4,14 @@ import { CalculateDistance, Delay, GetLongestDistance, LoadJsonFile } from "./ut
 let zones: zonesListType = {
     models: {},
     entities: {},
-    vehicles: {
-        doors: {
-            dist: 2,
-            bones: [ 'handle_dside_f', 'handle_dside_r', 'handle_pside_f', 'handle_pside_r' ],
-            options: [
-                {
-                    label: "open",
-                }
-            ]
-        }
-    },
+    vehicles: {},
     spriteOffsets: {}
 }
 
 export const Init = async (): Promise<void> => {
     zones.models = LoadJsonFile('data/models.json')
     zones.spriteOffsets = LoadJsonFile('data/spriteOffsets.json')
+    zones.vehicles = LoadJsonFile('data/vehicle.json')
 }
 
 export const getOptions = async (dist: number, coords: Vector3, entity: number, entityModel: number, entityType: number) : Promise<void> => {

@@ -1,0 +1,74 @@
+{
+    "handle_dside_f": {
+        "dist": 2,
+        "bones": [ "handle_dside_f" ],
+        "options": [
+            {
+                "label": "Open door",
+                "icon": "mdi:car-door",
+                "event": "context:toggleDoor",
+                "data": 0
+            }
+        ]
+    },
+    "handle_dside_r": {
+        "dist": 2,
+        "bones": [ "handle_dside_r" ],
+        "options": [
+            {
+                "label": "Open door",
+                "icon": "mdi:car-door",
+                "event": "context:toggleDoor",
+                "data": 2
+            }
+        ]
+    },
+    "handle_pside_f": {
+        "dist": 2,
+        "bones": [ "handle_pside_f" ],
+        "options": [
+            {
+                "label": "Open door",
+                "icon": "mdi:car-door",
+                "event": "context:toggleDoor",
+                "data": 1
+            }
+        ]
+    },
+    "handle_pside_r": {
+        "dist": 2,
+        "bones": [ "handle_pside_r" ],
+        "options": [
+            {
+                "label": "Open door",
+                "icon": "mdi:car-door",
+                "event": "context:toggleDoor",
+                "data": 3
+            }
+        ]
+    },
+    "bonnet": {
+        "dist": 2,
+        "bones": [ "bonnet" ],
+        "options": [
+            {
+                "label": "Open bonnet",
+                "icon": "mdi:car-door",
+                "event": "context:toggleDoor",
+                "data": 4
+            }
+        ]
+    },
+    "boot": {
+        "dist": 2,
+        "bones": [ "boot" ],
+        "options": [
+            {
+                "label": "Open boot",
+                "icon": "mdi:car-door",
+                "event": "context:toggleDoor",
+                "data": 5
+            }
+        ]
+    }
+}

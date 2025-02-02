@@ -3,8 +3,12 @@ export type Vector2 = [number, number]
 
 export type itemType = {
     label: string,
+    data?: any;
+    event?: string,
+    server?: boolean,
+    action?: (entity: number, data?: any) => void,
     icon?: string, 
-    subItems?: itemType[]
+    subItems?: itemType[],
 }
 
 export type objectType = {

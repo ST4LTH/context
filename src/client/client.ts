@@ -1,14 +1,18 @@
 import * as Zones from './modules/zones';
+import * as Vehicle from './modules/vehicle';
 import { CalculateDistance, DisableControls, LoadJsonFile, ScreenToWorld } from './modules/utils';
 import { displaySprites } from './modules/zones';
+import { itemType } from './types';
 
 (async () => {
     await Zones.Init();
+    await Vehicle.Init();
 })();
 
 const config = LoadJsonFile<typeof import('../../data/config.json')>('data/config.json')
 
 let selected: number = 0
+let entity: number = 0
 let selecting: boolean = false
 let tickHandle: number | null = null
 
@@ -39,8 +43,8 @@ const target = (toggle:boolean) : void => {
                 return
             } 
 
+            SetEntityDrawOutlineColor(config.outline.r, config.outline.g, config.outline.b, count)
             count = count - 10
-            SetEntityDrawOutlineColor(255, 255, 255, count - 10)
         })
         return
     } 
@@ -83,17 +87,27 @@ RegisterRawNuiCallback('click', async () => {
     SendNuiMessage(JSON.stringify({
         type: 'toggleContext',
         data: true
-    }));
+    }))
+    
+    entity = entityHit
 
     if (selected) {
         SetEntityDrawOutline(selected, false)
     }
 
-    if (config.outline.enabled) {
-        DrawLine(x, y, z, endCoords[0], endCoords[1], endCoords[2], config.outline.r, config.outline.g, config.outline.b, 255)
+    if (config.outline.enabled && !(entityType == 2)) {
         SetEntityDrawOutline(entityHit, true)
         SetEntityDrawOutlineShader(1)
         selected = entityHit
+    }
+})
+
+RegisterRawNuiCallback('action', (data: { body: string }) => {
+    let nuiData:itemType = JSON.parse(data.body)
+    console.log('action', nuiData.event)
+
+    if (nuiData.event) {
+        TriggerEvent(nuiData.event, entity, nuiData?.data)
     }
 });
 

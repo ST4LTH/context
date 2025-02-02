@@ -16,47 +16,7 @@ const App: Component = () => {
   let backgroundRef!: HTMLDivElement;
   const [store, setStore] = createStore<storeType>({
     open: false,
-    list: [
-      {
-        label: 'Test',
-        subItems: [
-          {
-            label: 'Subitem',
-            subItems: [
-              {
-                  label: 'Subitem in a subitem 🤓',
-              }
-            ]
-          }
-        ]
-      },
-      {
-        label: 'Test',
-        subItems: [
-          {
-            label: 'Subitem',
-            subItems: [
-              {
-                  label: 'Subitem in a subitem 🤓',
-              }
-            ]
-          }
-        ]
-      },
-      {
-        label: 'Test',
-        subItems: [
-          {
-            label: 'Subitem',
-            subItems: [
-              {
-                  label: 'Subitem in a subitem 🤓',
-              }
-            ]
-          }
-        ]
-      },
-    ],
+    list: [],
   })
   const [lastCoords, setLastCoords] = createSignal<number[]>([0, 700])
   const [coords, setCoords] = createSignal<number[]>([0, 700])
@@ -68,8 +28,6 @@ const App: Component = () => {
     setTimeout(() => {
       let left = Math.max(0, Math.min(lastCoords()[0] - contextRef.offsetWidth / 2, window.innerWidth - contextRef.offsetWidth))
       let top = Math.max(0, Math.min(lastCoords()[1] - contextRef.offsetHeight / 2, window.innerHeight - contextRef.offsetHeight))
-    
-      console.log(left, window.innerWidth)
   
       setCoords([left, top])
     })
@@ -88,11 +46,17 @@ const App: Component = () => {
 
   const handleClick = (e: MouseEvent, index: number) : void => {
     e.stopPropagation()
-    if (drawer() == index) {
-      setDrawer(-1)
+
+    if (store.list[index]?.subItems) {
+      if (drawer() == index) {
+        setDrawer(-1)
+        return
+      }
+      setDrawer(index)
       return
     }
-    setDrawer(index)
+
+    post('action', store.list[index])
   }
 
   const scroll = () => {
@@ -104,7 +68,7 @@ const App: Component = () => {
     }, 0);
   }
 
-  const handleMouseMove = (event: MouseEvent): void => {
+/*   const handleMouseMove = (event: MouseEvent): void => {
     let dir: 'left' | 'right' | 'center' = 'center'
   
     if (event.clientX < 50) {
@@ -117,7 +81,7 @@ const App: Component = () => {
       post(dir)
       setDirection(dir)
     }
-  };
+  }; */
   
 
 /*   createEffect(() => {

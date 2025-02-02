@@ -1,3 +1,4 @@
+import { post } from "@/misc";
 import { itemType } from "@/types";
 import { Icon } from "@iconify-icon/solid";
 import { createSignal } from "solid-js";
@@ -15,11 +16,17 @@ const ContextList = ({
 
     const handleSubClick = (e: MouseEvent, index: number): void => {
         e.stopPropagation();
-        if (subDrawer() === index) {
-            setSubDrawer(-1);
-        } else {
-            setSubDrawer(index);
+
+        if (list[index]?.subItems) {
+            if (subDrawer() == index) {
+                setSubDrawer(-1)
+                return
+            }
+            setSubDrawer(index)
+            return
         }
+      
+        post('action', list[index])
     };
 
     return (
