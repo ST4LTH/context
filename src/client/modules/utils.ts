@@ -1,4 +1,4 @@
-import { numZoneType, Vector2, Vector3, zoneType } from "client/types";
+import { Vector2, Vector3, zoneType } from "client/types";
 
 export const Delay = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 

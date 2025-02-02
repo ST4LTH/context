@@ -2,8 +2,7 @@ fx_version 'cerulean'
 game 'gta5'
 
 client_scripts {
-    'dist/client/*.js',
-    'main.lua'
+    'dist/client/*.js'
 }
 
 server_scripts {

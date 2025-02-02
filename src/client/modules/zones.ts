@@ -3,7 +3,18 @@ import { CalculateDistance, Delay, GetLongestDistance, LoadJsonFile } from "./ut
 
 let zones: zonesListType = {
     models: {},
-    polyZones: {},
+    entities: {},
+    vehicles: {
+        doors: {
+            dist: 2,
+            bones: [ 'handle_dside_f', 'handle_dside_r', 'handle_pside_f', 'handle_pside_r' ],
+            options: [
+                {
+                    label: "open",
+                }
+            ]
+        }
+    },
     spriteOffsets: {}
 }
 
@@ -14,6 +25,7 @@ export const Init = async (): Promise<void> => {
 
 export const getOptions = async (dist: number, coords: Vector3, entity: number, entityModel: number, entityType: number) : Promise<void> => {
     let list:itemType[] = []
+
     if (zones.models[entityModel]) {
         const zone = zones.models[entityModel]
         Object.keys(zone).forEach((key) => {
@@ -25,6 +37,34 @@ export const getOptions = async (dist: number, coords: Vector3, entity: number, 
         });
     }
 
+    if (zones.entities[entity]) {
+        const zone = zones.entities[entity]
+        Object.keys(zone).forEach((key) => {
+            const zoneItem = zone[key]
+
+            if (!zoneItem) return 
+            if (zoneItem.dist !== undefined && zoneItem.dist < dist) return
+            list.push(...zoneItem.options)
+        });
+    }
+
+    if (entityType == 2 && !IsPedInAnyVehicle(PlayerPedId(), true)) {
+        Object.keys(zones.vehicles).forEach((key) => {
+            const zoneItem = zones.vehicles[key]
+
+            if (!zoneItem.bones) return 
+            for (let bone of zoneItem.bones) {
+                const boneId = GetEntityBoneIndexByName(entity, bone)
+                const boneCoord = GetEntityBonePosition_2(entity, boneId)
+                const boneDist = CalculateDistance(coords[0], coords[1], coords[2], boneCoord[0], boneCoord[1], boneCoord[2])
+
+                if (boneDist < 0.5) {
+                    list.push(...zoneItem.options)
+                }
+            }
+        })
+    }
+
     SendNuiMessage(JSON.stringify({
         type: 'setMenu',
         data: list
@@ -33,30 +73,60 @@ export const getOptions = async (dist: number, coords: Vector3, entity: number, 
     return 
 }
 
+export const addEntity = (entity: number|number[], id: string, data: objectType) => {
+    if (Array.isArray(entity)) {
+        entity.forEach((e) => {
+            if (!zones.entities[e]) {
+                zones.entities[e] = {}
+            }
+            zones.entities[e][id] = data
+        })
+        return
+    }
+    if (!zones.entities[entity]) {
+        zones.entities[entity] = {}
+    }
+    zones.entities[entity][id] = data
+} 
+global.exports("addEntity", addEntity)
 
-export const addModel = (model: number, id: string, data: objectType) => {
+export const addModel = (model: number|number[], id: string, data: objectType) => {
+    if (Array.isArray(model)) {
+        model.forEach((m) => {
+            if (!zones.models[m]) {
+                zones.models[m] = {}
+            }
+            zones.models[m][id] = data
+        })
+        return
+    }
     if (!zones.models[model]) {
         zones.models[model] = {}
     }
     zones.models[model][id] = data
-}
+} 
+global.exports("addModel", addModel)
 
 let sprites = false
-
 export const displaySprites = (toggle: boolean):void => {
-    let objects: number[] = GetGamePool('CObject')
-    const [x, y, z] = GetEntityCoords(PlayerPedId(), false)
     sprites = toggle
+    if (!toggle) return
+
+    const objects: number[] = GetGamePool('CObject')
+    const vehicles: number[] = GetGamePool('CVehicle')
+    const [x, y, z] = GetEntityCoords(PlayerPedId(), false)
 
     for (let entity of objects) {
         const model = GetEntityModel(entity)
-        if (!zones.models[model]) {
+        if (!zones.models[model] && !zones.entities[entity]) {
             continue
         }
 
+        console.log(model)
+
         const coords = GetEntityCoords(entity, false)
         const dist = CalculateDistance(x, y, z, coords[0], coords[1], coords[2])
-        if (dist > GetLongestDistance(zones.models[model])) {
+        if (dist > GetLongestDistance(zones.models[model]) || zones.entities[entity]) {
             continue
         }
 
@@ -67,6 +137,35 @@ export const displaySprites = (toggle: boolean):void => {
             coords[2] += offset[2]
         }
         sprite(coords)
+    }
+
+    if (IsPedInAnyVehicle(PlayerPedId(), true)) return
+    for (let entity of vehicles) {
+        const coords = GetEntityCoords(entity, false)
+        const dist = CalculateDistance(x, y, z, coords[0], coords[1], coords[2])
+        if (dist > 3) {
+            continue
+        }
+
+        let bones:{[key: string]: boolean} = {}
+
+        Object.keys(zones.vehicles).forEach((key) => {
+            const zoneItem = zones.vehicles[key]
+
+            if (!zoneItem.bones) return 
+            for (let bone of zoneItem.bones) {
+                if (bones[bone]) continue
+                bones[bone] = true
+                const boneId = GetEntityBoneIndexByName(entity, bone)
+                const boneCoord = GetEntityBonePosition_2(entity, boneId)
+                const boneDist = CalculateDistance(x, y, z, boneCoord[0], boneCoord[1], boneCoord[2])
+
+                if (boneDist < 2) {
+                    sprite(boneCoord)
+                }
+            }
+        })
+
     }
 }
 

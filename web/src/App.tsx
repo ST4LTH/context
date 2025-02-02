@@ -15,7 +15,7 @@ const App: Component = () => {
   let contextRef!: HTMLDivElement;
   let backgroundRef!: HTMLDivElement;
   const [store, setStore] = createStore<storeType>({
-    open: true,
+    open: false,
     list: [
       {
         label: 'Test',

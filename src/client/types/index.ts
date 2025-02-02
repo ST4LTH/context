@@ -12,16 +12,24 @@ export type objectType = {
     options: itemType[]
 } 
 
+export type vehicleType = {
+    dist?: number,
+    bones: string[],
+    options: itemType[]
+} 
+
 export type zoneType = {
     [key: string]: objectType
 } 
 
 export type numZoneType = { [key: number]: zoneType }
-export type stringZoneType = { [key: number]: zoneType }
+export type stringZoneType = { [key: string]: zoneType }
+export type vehicleZoneType = { [key: string]: vehicleType }
 export type spriteOffsetsType = { [key: string]: Vector3 }
 
 export type zonesListType = {
-    models: numZoneType;
-    polyZones: stringZoneType;
+    models: numZoneType,
+    entities: numZoneType,
+    vehicles: vehicleZoneType,
     spriteOffsets: spriteOffsetsType
 };

@@ -8,25 +8,6 @@ import { displaySprites } from './modules/zones';
 
 const config = LoadJsonFile<typeof import('../../data/config.json')>('data/config.json')
 
-/* Zones.addModel(-870868698, 'banking', {
-    dist: 5,
-    options: [
-        {
-            label: 'Test',
-            subItems: [
-                {
-                    label: 'Subitem',
-                    subItems: [
-                        {
-                            label: 'Subitem in a subitem 🤓',
-                        }
-                    ]
-                }
-            ]
-        }
-    ]
-}) */
-
 let selected: number = 0
 let selecting: boolean = false
 let tickHandle: number | null = null
