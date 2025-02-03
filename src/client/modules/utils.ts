@@ -1,6 +1,7 @@
 import { Vector2, Vector3, zoneType } from "client/types";
 
 export const Delay = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
+export const IsOdd = (number: number): boolean => number % 2 !== 0;
 
 export const ScreenToWorld = (flags: number, toIgnore: number): [boolean, Vector3, number[], number, number, Vector3] => {
     const camRot = GetGameplayCamRot(0) as Vector3

@@ -15,13 +15,53 @@ const App: Component = () => {
   let contextRef!: HTMLDivElement;
   let backgroundRef!: HTMLDivElement;
   const [store, setStore] = createStore<storeType>({
-    open: false,
-    list: [],
+    open: true,
+    list: [
+/*       {
+        label: 'Test',
+        subItems: [
+          {
+            label: 'Subitem',
+            subItems: [
+              {
+                  label: 'Subitem in a subitem 🤓',
+              }
+            ]
+          }
+        ]
+      },
+      {
+        label: 'Test',
+        subItems: [
+          {
+            label: 'Subitem',
+            subItems: [
+              {
+                  label: 'Subitem in a subitem 🤓',
+              }
+            ]
+          }
+        ]
+      },
+      {
+        label: 'Test',
+        subItems: [
+          {
+            label: 'Subitem',
+            subItems: [
+              {
+                  label: 'Subitem in a subitem 🤓',
+              }
+            ]
+          }
+        ]
+      }, */
+    ],
   })
   const [lastCoords, setLastCoords] = createSignal<number[]>([0, 700])
   const [coords, setCoords] = createSignal<number[]>([0, 700])
   const [drawer, setDrawer] = createSignal<number>(-1)
-  const [direction, setDirection] = createSignal<'left' | 'right' | 'center'>()
+/*   const [direction, setDirection] = createSignal<'left' | 'right' | 'center'>() */
 
   useNuiEvent('setMenu', (data:itemType[]) => {
     setStore('list', data)
@@ -42,6 +82,9 @@ const App: Component = () => {
     post('click')
     setDrawer(-1)
     setLastCoords([event.clientX, event.clientY])
+/*     let left = Math.max(0, Math.min(lastCoords()[0], window.innerWidth - contextRef.offsetWidth))
+    let top = Math.max(0, Math.min(lastCoords()[1], window.innerHeight - contextRef.offsetHeight))
+    setCoords([left, top]) */
   }
 
   const handleClick = (e: MouseEvent, index: number) : void => {

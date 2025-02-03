@@ -4,7 +4,7 @@
         "bones": [ "handle_dside_f" ],
         "options": [
             {
-                "label": "Open door",
+                "label": "Open/Close door",
                 "icon": "mdi:car-door",
                 "event": "context:toggleDoor",
                 "data": 0
@@ -16,7 +16,7 @@
         "bones": [ "handle_dside_r" ],
         "options": [
             {
-                "label": "Open door",
+                "label": "Open/Close door",
                 "icon": "mdi:car-door",
                 "event": "context:toggleDoor",
                 "data": 2
@@ -28,7 +28,7 @@
         "bones": [ "handle_pside_f" ],
         "options": [
             {
-                "label": "Open door",
+                "label": "Open/Close door",
                 "icon": "mdi:car-door",
                 "event": "context:toggleDoor",
                 "data": 1
@@ -40,7 +40,7 @@
         "bones": [ "handle_pside_r" ],
         "options": [
             {
-                "label": "Open door",
+                "label": "Open/Close door",
                 "icon": "mdi:car-door",
                 "event": "context:toggleDoor",
                 "data": 3
@@ -52,7 +52,7 @@
         "bones": [ "bonnet" ],
         "options": [
             {
-                "label": "Open bonnet",
+                "label": "Open/Close bonnet",
                 "icon": "mdi:car-door",
                 "event": "context:toggleDoor",
                 "data": 4

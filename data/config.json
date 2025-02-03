@@ -2,8 +2,15 @@
     "maxDistance" : 10,
     "outline" : {
         "enabled" : true,
-        "r" : 255,
-        "g" : 255,
-        "b" : 255
+        "r" : 136,
+        "g" : 153,
+        "b" : 188
+    },
+    "sprite" : {
+        "enabled" : true,
+        "r" : 136,
+        "g" : 153,
+        "b" : 188,
+        "a" : 255
     }
 }

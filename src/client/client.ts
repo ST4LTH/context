@@ -95,7 +95,7 @@ RegisterRawNuiCallback('click', async () => {
         SetEntityDrawOutline(selected, false)
     }
 
-    if (config.outline.enabled && !(entityType == 2)) {
+    if (config.outline.enabled && entityType == 3) {
         SetEntityDrawOutline(entityHit, true)
         SetEntityDrawOutlineShader(1)
         selected = entityHit
@@ -104,11 +104,18 @@ RegisterRawNuiCallback('click', async () => {
 
 RegisterRawNuiCallback('action', (data: { body: string }) => {
     let nuiData:itemType = JSON.parse(data.body)
-    console.log('action', nuiData.event)
+    console.log('action', nuiData)
 
     if (nuiData.event) {
-        TriggerEvent(nuiData.event, entity, nuiData?.data)
+        if (nuiData.server) {
+            TriggerServerEvent(nuiData.event, entity, nuiData?.data)
+        } else {
+            TriggerEvent(nuiData.event, entity, nuiData?.data)
+        }
     }
+
+    if (nuiData.preventClose) return
+    target(false)
 });
 
 RegisterCommand('+target', () : void => { target(true) }, false)

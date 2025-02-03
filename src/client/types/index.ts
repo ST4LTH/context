@@ -7,6 +7,7 @@ export type itemType = {
     event?: string,
     server?: boolean,
     action?: (entity: number, data?: any) => void,
+    preventClose?: boolean,
     icon?: string, 
     subItems?: itemType[],
 }
@@ -35,5 +36,6 @@ export type zonesListType = {
     models: numZoneType,
     entities: numZoneType,
     vehicles: vehicleZoneType,
+    inVehicle: itemType[],
     spriteOffsets: spriteOffsetsType
 };

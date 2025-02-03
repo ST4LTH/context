@@ -48,58 +48,6 @@
                             ]
                         }
                     ]
-                },
-                {
-                    "label": "Test",
-                    "subItems": [
-                        {
-                            "label": "Subitem",
-                            "subItems": [
-                                {
-                                    "label": "Subitem in a subitem 🤓"
-                                }
-                            ]
-                        }
-                    ]
-                },
-                {
-                    "label": "Test",
-                    "subItems": [
-                        {
-                            "label": "Subitem",
-                            "subItems": [
-                                {
-                                    "label": "Subitem in a subitem 🤓"
-                                }
-                            ]
-                        }
-                    ]
-                },
-                {
-                    "label": "Test",
-                    "subItems": [
-                        {
-                            "label": "Subitem",
-                            "subItems": [
-                                {
-                                    "label": "Subitem in a subitem 🤓"
-                                }
-                            ]
-                        }
-                    ]
-                },
-                {
-                    "label": "Test",
-                    "subItems": [
-                        {
-                            "label": "Subitem",
-                            "subItems": [
-                                {
-                                    "label": "Subitem in a subitem 🤓"
-                                }
-                            ]
-                        }
-                    ]
                 }
             ]
         }

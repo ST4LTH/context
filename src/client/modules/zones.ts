@@ -1,17 +1,22 @@
 import { itemType, objectType, Vector3, zonesListType } from "client/types";
 import { CalculateDistance, Delay, GetLongestDistance, LoadJsonFile } from "./utils";
+import { getVehicleFunctionalDoors } from "./vehicle";
 
 let zones: zonesListType = {
     models: {},
     entities: {},
     vehicles: {},
-    spriteOffsets: {}
+    inVehicle: [],
+    spriteOffsets: {},
 }
+
+const config = LoadJsonFile<typeof import('../../../data/config.json')>('data/config.json')
 
 export const Init = async (): Promise<void> => {
     zones.models = LoadJsonFile('data/models.json')
     zones.spriteOffsets = LoadJsonFile('data/spriteOffsets.json')
     zones.vehicles = LoadJsonFile('data/vehicle.json')
+    zones.inVehicle = LoadJsonFile('data/inVehicle.json')
 }
 
 export const getOptions = async (dist: number, coords: Vector3, entity: number, entityModel: number, entityType: number) : Promise<void> => {
@@ -54,6 +59,17 @@ export const getOptions = async (dist: number, coords: Vector3, entity: number, 
                 }
             }
         })
+    } 
+
+    if (IsPedInAnyVehicle(PlayerPedId(), true) && entityType == 2) {
+        list = [
+            ...list,
+            {
+                label: 'Doors',
+                subItems: getVehicleFunctionalDoors(entity)
+            },
+            ...zones.inVehicle
+        ]
     }
 
     SendNuiMessage(JSON.stringify({
@@ -113,8 +129,6 @@ export const displaySprites = (toggle: boolean):void => {
             continue
         }
 
-        console.log(model)
-
         const coords = GetEntityCoords(entity, false)
         const dist = CalculateDistance(x, y, z, coords[0], coords[1], coords[2])
         if (dist > GetLongestDistance(zones.models[model]) || zones.entities[entity]) {
@@ -168,7 +182,7 @@ export const sprite = async (coords: number[]) => {
 
     while (sprites) {
         SetDrawOrigin(coords[0], coords[1], coords[2], 0)
-        DrawSprite("shared", "emptydot_32", 0, 0, 0.015, 0.025, 0, 255, 255, 255, 255)
+        DrawSprite("shared", "emptydot_32", 0, 0, 0.015, 0.025, 0, config.sprite.r, config.sprite.g, config.sprite.b, config.sprite.a)
         ClearDrawOrigin()
         await Delay(0)
     }
